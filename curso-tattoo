@@ -2271,7 +2271,7 @@
           <div class="question-num">// Pregunta 01 de 04</div>
           <div class="question-text">¿Qué documento es obligatorio que firme el cliente ANTES de empezar cualquier sesión de tatuaje?</div>
           <ul class="options-list">
-            <li class="option-item" data-val="a"><div class="option-indicator">A</div>Una factura por el trabajo a realizar</div>
+            <li class="option-item" data-val="a"><div class="option-indicator">A</div>Una factura por el trabajo a realizar</li>
             <li class="option-item" data-val="b"><div class="option-indicator">B</div>El consentimiento informado (incluyendo alergias y condiciones médicas)</li>
             <li class="option-item" data-val="c"><div class="option-indicator">C</div>Solo basta con un acuerdo verbal</li>
             <li class="option-item" data-val="d"><div class="option-indicator">D</div>No es obligatorio ningún documento</li>
@@ -2378,12 +2378,6 @@ const moduleProgress = {
 // Track selected answers per quiz
 const quizAnswers = {};
 
-function initQuiz(quizId) {
-  quizAnswers[quizId] = {};
-  const questions = document.querySelectorAll(`#${quizId} .question-block, #quizForm${quizId.slice(-1)} .question-block`);
-  // Use the form ID instead
-}
-
 // Option selection
 document.querySelectorAll('.options-list').forEach(list => {
   list.querySelectorAll('.option-item').forEach(item => {
@@ -2481,16 +2475,18 @@ function submitQuiz(quizId, correctAnswers, nextModuleId, resultId, requiredPct 
       actionDiv.innerHTML = `<button class="unlock-btn" onclick="unlockModule('${nextModuleId}', ${num})">DESBLOQUEAR MÓDULO ${parseInt(num)+1} →</button>`;
     } else {
       actionDiv.innerHTML = `<div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--yellow);letter-spacing:3px;margin-top:20px;">🎓 ¡CURSO TEÓRICO COMPLETADO!</div><div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:12px;line-height:1.8;">Ahora empieza la parte práctica: piel sintética → frutas → personas bajo supervisión.</div>`;
-      updateProgress(6);
     }
   } else {
     actionDiv.innerHTML = `<button class="retry-btn" onclick="retryQuiz('${quizId}', '${num}')">VOLVER A INTENTAR</button>`;
   }
 
   resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  if (pass && nextModuleId) {
-    moduleProgress[nextModuleId.replace('#','')] = true;
+  if (pass) {
+    if (nextModuleId) {
+      moduleProgress[nextModuleId.replace('#','')] = true;
+    }
     updateProgress(parseInt(num));
+    updateDots(parseInt(num));
   }
 }
 
@@ -2498,8 +2494,6 @@ function unlockModule(moduleId, currentNum) {
   const section = document.getElementById(moduleId);
   if (!section) return;
   section.classList.remove('locked');
-  updateProgress(parseInt(currentNum));
-  updateDots(parseInt(currentNum));
   setTimeout(() => {
     section.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 300);
